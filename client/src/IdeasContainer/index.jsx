@@ -3,6 +3,7 @@ import BaseComponent from '../BaseComponent';
 import $ from 'jquery';
 import './index.css';
 import Idea from './ideaItem';
+import IdeaForm from './ideaForm';
 import update from 'immutability-helper';
 
 class IdeasContainer extends BaseComponent {
@@ -11,6 +12,7 @@ class IdeasContainer extends BaseComponent {
     super(props);
     this.state = {
       ideas: [],
+      editingIdeaId: null,
     };
   }
 
@@ -41,7 +43,10 @@ class IdeasContainer extends BaseComponent {
         const ideas = update(this.state.ideas, {
           $splice: [[0, 0, response.data.idea]]
         })
-        this.setState({ideas: ideas})
+        this.setState({
+          ideas: ideas,
+          editingIdeaId: response.data.idea.id,
+        })
         //We make a new copy of this.state.ideas and use the $splice command to insert the new idea (in response.data) at the 0th index of this array.
       },
       error: (xhr, status, err) => {
@@ -61,7 +66,11 @@ class IdeasContainer extends BaseComponent {
         </button>
         <div>
           {this.state.ideas.map((idea) => {
-            return (<Idea idea={idea} key={idea.id} />)
+            if (idea.id === this.state.editingIdeaId) {
+              return (<IdeaForm idea={idea} key={idea.id} />)
+            } else {
+              return (<Idea idea={idea} key={idea.id} />)
+            }
           })}
         </div>
       </div>
