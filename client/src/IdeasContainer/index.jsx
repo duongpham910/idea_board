@@ -13,6 +13,7 @@ class IdeasContainer extends BaseComponent {
     this.state = {
       ideas: [],
       editingIdeaId: null,
+      notification: '',
     };
   }
 
@@ -61,7 +62,20 @@ class IdeasContainer extends BaseComponent {
     let ideas = update(this.state.ideas, {
       [ideaIndex]: { $set: idea }
     })
-    this.setState({ideas: ideas})
+    this.setState({
+      ideas: ideas,
+      notification: 'All changes saved'
+    })
+  }
+
+  resetNotification = () => {
+    this.setState({notification: ''})
+  }
+
+  enableEditing = (id) => {
+    this.setState({editingIdeaId: id},
+      () => { this.title.focus() }
+    )
   }
 
   render() {
@@ -79,9 +93,15 @@ class IdeasContainer extends BaseComponent {
         <div>
           {this.state.ideas.map((idea) => {
             if (idea.id === this.state.editingIdeaId) {
-              return (<IdeaForm idea={idea} key={idea.id} updateIdea={this.updateIdea}/>)
+              return (
+                <IdeaForm
+                  idea={idea}
+                  key={idea.id}
+                  updateIdea={this.updateIdea}
+                  titleRef= {input => this.title = input}
+                  resetNotification={this.resetNotification} />)
             } else {
-              return (<Idea idea={idea} key={idea.id} />)
+              return (<Idea idea={idea} key={idea.id} enableEditing={this.enableEditing}/>)
             }
           })}
         </div>
