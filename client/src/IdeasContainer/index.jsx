@@ -55,6 +55,15 @@ class IdeasContainer extends BaseComponent {
     });
   }
 
+  updateIdea = (idea) => {
+    let ideaIndex = this.state.ideas.findIndex(x => x.id === idea.id)
+    console.log(ideaIndex);
+    let ideas = update(this.state.ideas, {
+      [ideaIndex]: { $set: idea }
+    })
+    this.setState({ideas: ideas})
+  }
+
   render() {
     return (
       <div className="App">
@@ -64,10 +73,13 @@ class IdeasContainer extends BaseComponent {
         <button className="newIdeaButton" onClick={this.addNewIdea} >
           New Idea
         </button>
+        <span className="notification">
+          {this.state.notification}
+        </span>
         <div>
           {this.state.ideas.map((idea) => {
             if (idea.id === this.state.editingIdeaId) {
-              return (<IdeaForm idea={idea} key={idea.id} />)
+              return (<IdeaForm idea={idea} key={idea.id} updateIdea={this.updateIdea}/>)
             } else {
               return (<Idea idea={idea} key={idea.id} />)
             }
